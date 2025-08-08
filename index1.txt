@@ -1,0 +1,473 @@
+DevOps is a business technology which delivers end to end delivery/product.
+
+Types of environment
+1. Dev env
+2. Test env
+3. UAT(User acceptance Test) env
+4. Production env
+
+Types of kernel:
+ Modular
+ Monolithic
+
+LINUX is a Kernel - it uses modular kernel
+Windows run on monolithic kernel
+
+3 types of root in Linux
+ a. root - SuperUser / Power user
+ b. / - root partition ( like C drive)( where the OS is)
+ c. /root/home
+
+/swap space is like virtual memory its used when the ram is full
+/tmp is world readable and is automatically removed in 10 days
+
+/var/www/html is for apache server
+/var/ftp/pub
+
+EC2 - elastic compute cloud
+Instance - virtual system
+port - 22 for Linux
+port - 3389 for windows RDP
+
+sudo su - 
+For description of system -
+cat /etc/os-release
+
+for changing hostname
+hostnamectl set-hostname server.example.com
+
+Day 2
+
+Permissions in Linux
+
+Types:
+	U - User
+	G - Group
+	O - Other
+ascii Linux is shown by . (security Linux) - it means ascii Linux is enabled on this machine
+
+ll -d devops.txt 
+Shows the file
+
+ll -d /data/
+
+r- read  or   4
+w- write or   2
+x- execute or 1
+which is total of 7
+
+To change file ownership
+chown permission <resource name>
+chown jk /salesdata/
+
+To change group ownership
+chgrp permission <resource name>
+ex : chgrp sales/salesdata/
+
+To change file permissions
+chmod 777 /data
+first 7 - user second 7- group third 7-other
+
+or,
+chmod u+rwx g+rwx o-rwx /data
+
+Max permission on folder - 777
+Max permission on file - 666
+
+sticky bit permission is inherited on the folder, so that user can read others data but cannot delete it
+Sticky bit is always applied to others
+chmod o+t /salesdata/
+
+To move : mv zain.txt /salesdata/
+
+SG id bit is at group level so that we can modify(write) files in the group
+chmod g+s /salesdata/
+drwxrws--T.
+It gets executed on the new files created after this
+
+To append in a file
+cat >> devops.txt
+
+If we exit we become SUDO user as Aws - ec2-user@server
+SUDO user has some special command rights - 
+Sudo user's name starts with sudo
+
+--
+whereis "command" : tells where the source of command is
+
+cd/var/log/ -to see the log directory
+ll
+
+fdisk -l :- to show storage and partition
+
+jacksparrow     ALL=(ALL)       /usr/sbin/useradd, /usr/sbin/passwd, !/usr/sbin/passwd root
+
+
+DAEMON
+
+uname -r
+uname -a
+rpmquery httpd - to know if the package is installed or not
+
+vim /etc/httpd/conf/httpd.conf
+
+systemctl status httpd - to know about the service
+
+systemctl start httpd - to start the service
+
+reboot from aws instance and again httpd stops
+again start
+then
+systemctl enable httpd
+
+cd /var/www/html/ -: to move to html folder
+echo "this is my html file" > index.html
+curl http://localhost
+
+apache by default runs on port 80 so allow port 80 in aws security group inbound rules
+
+vim /etc/httpd/conf/httpd.conf  -- to edit or config
+
+
+default document 
+
+systemctl reload-or-restart httpd.service (mostly to be reused as machine checks reload or restart is required and does accordingly to reflect new changes)
+
+systemctl stop httpd (to stop a service)
+systemctl disable httpd ( to permanently disable a service )
+
+systemctl mask httpd ( to keep the service away from getting started or enabled)
+systemctl unmask httpd
+
+Day 3
+
+Version Control ( Git & GitHub )
+
+Source code version control system > GIT
+
+Types of version control system
+	Centralized 
+	Distributed -- ex: GIT
+
+To setup a environment 
+we need atleast 3 VM
+
+SSH IS THE TRANSPORTATION MEDIUM
+SCP RUNS IN BACKEND OF SSH TO TRANSFER DATA
+
+sudo su -
+assign hostname (unique)
+IP address (unique)
+setup dns
+Linux to be installed on every machine
+Install Git Package on every machine (yum install git -y)
+SSH communication setup ( setup based on password & key based authentication )
+
+To set the machine as server :- git init --bare (run this command on only one machine to set it up as a server)
+
+----------------------------------------------------------
+
+you can ping the machine with the name or the IP
+if pinging with name we need to configure DNS server
+entry IP and name in vim /etc/hosts to setup DNS
+SSH work on port 22
+
+To update machine (package manager are dnf or yum for amazon)
+yum update -y
+
+rpmquery git - to check if git is installed
+
+To generate key (in dev machine not on server)
+ssh-keygen
+
+In server go to
+vim /etc/ssh/sshd_config
+and look for line 40 & 65 and type yes in them and remove comment #
+restart the services : systemctl restart sshd
+systemctl enable sshd
+
+In dev machines
+ssh-copy-id root@ipaddofserver
+
+cat authorized_keys in server to check if key is present
+
+NEXT
+move to dev machines
+move to the directories created
+ls -a to check if git is initialised
+create a index.html :- cat > index.html
+use: git add filename  (git add is used to put the file in git's tracked area)
+git status to check status
+git commit -m first-commit filename (-m is the message i.e., first-commit)
+git remote -v (to check if any remote location is present to push the file)
+git remote add origin root@ipofserver:/nameofdirectory ( it helps in making connection with server folder) 
+again git remote -v to check
+then
+git push origin master (master repository is available in directory(folder) we created in server)
+
+vim index.html to edit the file
+again file becomes untracked
+git add . (. which selects all file in the directory)
+git status
+
+git commit -m second_commit index.html
+
+again push it
+git push origin master  (the code will be pushed to master folder)
+
+in server move to the directory created then to refs then to heads to see master repo
+
+git log to check how many times files are commited
+
+
+IN new dev machine
+
+do
+git clone root@ipofroot:/directoryinroot
+then move to the directoryofroot in the new machine only
+you will get the codes/files there
+
+then edit via 
+vim index.html
+
+then git add .
+git commit -m commitname(whatever you name the new commit done) index.html
+git push origin master
+
+if other dev-one want to check other persons(dev-two) made changes - then he need to do
+git pull origin master
+
+Day 4
+
+Jenkins
+
+Open source platform which help in creating CI/CD pipeline
+
+Jenkins software is developed in Java
+
+Jenkins is used in default port 8080
+
+why we use multiple resource
+
+To have single point of failure
+
+Types of Pipeline :
+
+Declarative approach
+
+UI based pipeline
+
+Jenkins alternative - Gitlab, circleCI, Atlassian bamboo, Team city
+
+Continuous delivery is a manual process
+
+whereas Continuous deployment is a automatic process
+
+To build a java application we use Maven plugin in Jenkins
+
+Steps for Jenkins
+
+Host aws instance -us east 1-a
+space 15gb gp2
+connect in aws machine in the terminal
+sudo su -
+set hostname
+yum install jenkins (to install Jenkins) (it is not present in yum repository)
+get the Jenkins install command from website - https://www.jenkins.io/doc/tutorials/tutorial-for-installing-jenkins-on-AWS/#:~:text=This%20tutorial%20walks%20you%20through%20the%20process%20of,abilities%20need%20to%20be%20augmented%20on%20the%20instance. (Jenkins on aws)
+yum repolist all (to see all repositories present in machine)
+import keyfile from website
+sudo yum upgrade
+install java (java amazon-corretto)
+sudo yum install jenkins -y (now you can install Jenkins)
+sudo systemctl enable jenkins
+sudo systemctl start Jenkins
+Add port 8080 in security group inbound rules custom TCP
+ip:8080 on google
+sudo cat /var/lib/Jenkins/secret/intialAdminPassword
+then customize Jenkins on browser - install suggested plugins
+Go to build-in-node and bring it back online
+Integrate Jenkins with GitHub repository
+Go to GitHub created repo setting - add webhook
+Paste Jenkins ip along with port/github-webhook/
+content type application/json
+Generate token in jekins security - add a token name anything generate token \& copy token
+paste in webhook secret \& add the webhook - seeing the green tick
+save the token somewhere
+Install git in Jenkins machine
+CREATE NEW MACHINE
+
+create dev-server machine in aws and connect it in terminal (sudo su -,sethostname)
+install git
+create a html file in a directory gi init - git add . - git commit
+git branch -M branchname(main) --to connect with the branch of get repo
+git remote add origin git@githubsshkey
+git remote -v
+ssh-keygen
+go to .ssh/ and copy the content of .pub file
+and add it to SSH and GPG keys and new ssh key and paste the key and add ssh key
+git push origin main (--force) (not to do force push)
+generally to create another branch and merge it to the main branch
+Node low space issue
+
+sudo mount -o remount,size=2G /tmp
+
+open vim /etc/fstab
+
+tmpfs /tmp tmpfs defaults,noatime,mode=1777,size=2G 0 0
+
+Now move to Jenkins
+
+create job - new item
+job type freestyle
+source code management Git - paste http url -
+branch /main
+trigger manual
+then apply save
+Then click on Build Now to create a workspace
+make edit on the html file ( on dev server or
+again click on build now to make changes
+configure trigger - click on GitHub hook trigger (auto trigger when changes in code is made) !!!Poll SCM means it works continuously so higher cpu or disk utilization
+Now make changes in the html file and add, commit, push and auto build will be scheduled and check file automatically change will be reflected
+SLOW JENKIN ISSUE SOLVER
+
+cd /var/lib/Jenkins
+
+vim jenkins.model.JenkinsLocationConfiguration.xml
+
+change ip and save - then reboot aws
+
+
+Day 5
+
+Deploy Java based application using Maven via Tomcat Apache
+
+3 types of webserver to host java based application
+
+Apache
+Ngnix
+Tomcat Apache
+Plugins are utility - they are like connectors
+
+Maven are used to build java application (.war file generally for java)(they contain final artifacts)
+
+Deploy using Tomcat
+
+In Jenkins server machine
+
+install git
+install maven ( yum install maven -y)
+Go to jekins dashboard then plugins
+Install maven integration plugin
+install deploy to container plugin
+install GitHub integration plugin
+Restart Jenkins
+mvn -v -> to check maven directory
+MAVEN TOOLS PART ->
+
+copy java home directory
+Go to Jenkins -> manage Jenkins - tools
+add jdk
+paste java home directory
+remove git
+add maven
+copy maven home directory
+paste maven home directory
+BUILD NEW ITEM
+
+Then new item in Jenkins server --> name and select maven project
+select git - paste git path
+branch main
+remove snapshot tick
+apply save
+click on build now
+then check for success
+In dev-server machine
+
+follow prior steps from day 4
+
+Clone sir's maven java repo to Dev-machine just after installing git
+
+ssh-keygen
+
+connect with GitHub
+
+connect webhook
+
+then clone
+
+then push to your repo
+
+if not pushing - git remote remove origin
+
+then git remote add origin @sshofmyrepo
+
+then push again
+
+Host new machine
+
+tomcat-server
+create new security group tomcat
+allow security 8080
+10Gb -> launch
+install tomcat package from tomcat website
+core - tar.ez(gp2,sha512) -right click copy link
+yum install wget
+wget copiedlink
+tar -xvzf apache-tomcat-9.0.108.tar.gz (extract, verbosity, expand forcefully the file)(gz is extension for zip file)
+mv apache-tomcat.tar.gz /tmp/
+go to cloudstackh step by step install apache tomcat on amazon Linux
+====all from the link =====
+
+cd apache-tomcat-9.0.108
+cd bin
+chmod +x startup.sh
+chmod +x shutdown.sh
+cd
+yum install java* --> install all java new updates and dependencies
+cd apache
+cd conf/ --> ll
+vim tomcat-users.xml
+shift + G go to bottom
+cursor in between --> paste -> save and exit
+find -name context.html
+vim /webapps/examples/META-INF
+comment out the specified line --> save exit
+vim host-manager -- same and vim manager same
+cd bin/
+./startup.sh
+take instances public ip:8080
+sign manager app--> admin admin
+GO to Jenkins --
+
+set credentials - system - deployer - deployer
+
+builds
+
+configure
+
+add post build action
+
+deploy container war
+
+**/*.war
+
+context path /
+
+add container tomcat 9
+
+credentials select
+
+ip:8080/ url
+
+save apply
+
+Now go to GitHub
+
+webapp->index.jsp file
+
+make changes \& commit
+
+go to Jenkins and build now
+
+go to configure and hook trigger
+
