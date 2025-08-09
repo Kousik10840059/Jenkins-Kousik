@@ -1,0 +1,16 @@
+1st Q
+ useradd Kousik
+ passwd Kousik
+  cat /etc/group | grep -i wheel
+  cat /etc/group | grep -i nobody
+   usermod -G wheel Kousik
+   usermod -aG nobody Kousik
+   cat /etc/group | grep -i wheel
+
+2nd Q,
+ useradd deepak
+ whereis useradd
+  vim /etc/sudoers
+  deepak  ALL=(ALL)  /usr/sbin/useradd,/usr/sbin/passwd
+  su - deepak
+  useradd JK
