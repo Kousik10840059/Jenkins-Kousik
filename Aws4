@@ -113,7 +113,7 @@ Create subnet ->  -> devops-vpc -> give name -public subnet  -> zone us-east-1a 
 
 
 
-Create another subnet -> private subnet -> us-east-1b -> create
+Create another subnet -> private subnet -> us-east-1b -> cidr ->10.0.1.0/24-> create
 
 
 
