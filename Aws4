@@ -1,0 +1,31 @@
+Day 10
+
+Q. Setup Auto Scaling
+
+Create a Template -> us-east-1a -> select security group-> launch
+
+select the template -> actions -> create auto scaling group
+
+Instance type requirement ->
+
+Manual -> t2.micro
+
+Name -> on demand instance -> 2
+
+Network select 1a,1b,1c,1d
+
+Next -> load balancer -> attach new -> internet facing -> Create a target group -> No VPC -> Next
+
+Group capacity -> desired 2 -> scaling min 2 max 6 -> Target tracking scaling policy -> avg cpu utilization -> target value 50 -> instance warmup 180 secs
+
+Instance maintenance -> Launch before terminating or custom -> next
+
+create autoscaling group -> wait for it to go live
+
+top command to check cpu utilization
+
+DONT RUN THIS COMMAND - ITS FOR TESTING PURPOSE (NOT TO BE RUN ON PRODUCTION OR DEVELOPMENT)
+
+THIS COMMAND IS USED TO GIVE STRESS ON THE CPU -> yes > /dev/null \&
+
+then top to check cpu utilization again
